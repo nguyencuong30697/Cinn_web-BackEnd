@@ -54,4 +54,62 @@ usersRouter.post('/register',async (req, res)=>{
     }
 });
 
+usersRouter.post('/login',async (req,res)=>{
+    // check email
+    const email = req.body.email;
+    const password = req.body.password;
+    try {
+        // check email used or not ?
+        const user = await userModel.findOne({email: email}).lean();
+        if (!user) {
+          res.status(404).json({
+            success: false,
+            message: 'User not found'
+          });
+        } else if (!bcryptjs.compareSync(password, user.password)) {
+          res.status(400).json({
+            success: false,
+            message: 'Wrong password'
+          });
+        } else {
+          // Session
+          req.session.currentUser = {
+            _id: user._id,
+            email: user.email
+          };
+    
+          res.status(200).json({
+            success: true,
+            message: 'Login success',
+            data: {
+              email: user.email,
+            },
+          });
+        }
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: error.message,
+        });
+      }
+    // check password
+});
+
+// logout user
+usersRouter.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.status(200).json({
+      success: true,
+      message: 'Log out success',
+    });
+  });
+  
+// test Session currentUser
+usersRouter.get('/test', (req, res) => {
+    console.log(req.session.currentUser);
+    res.json({
+      success: true,
+    });
+  });
+
 module.exports = usersRouter;
