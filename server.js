@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const usersRouter = require('./users/users.routes');
 // connect mongodb
 mongoose.connect('mongodb://localhost:27017/cinn-Web',{useNewUrlParser: true},(error)=>{
     if (error){
@@ -13,6 +14,9 @@ mongoose.connect('mongodb://localhost:27017/cinn-Web',{useNewUrlParser: true},(e
         //middleware 
         //bodyParser to read body in header of request
         server.use(bodyParser.json());
+
+        //khai bao Routers
+        server.use('/users',usersRouter);
 
         // start server port 3001
         server.listen(3001,(error) => {
