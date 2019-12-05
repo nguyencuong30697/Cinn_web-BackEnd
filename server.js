@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const usersRouter = require('./users/users.routes');
+const expressSession = require('express-session');
 // connect mongodb
 mongoose.connect('mongodb://localhost:27017/cinn-Web',{useNewUrlParser: true},(error)=>{
     if (error){
@@ -14,6 +15,12 @@ mongoose.connect('mongodb://localhost:27017/cinn-Web',{useNewUrlParser: true},(e
         //middleware 
         //bodyParser to read body in header of request
         server.use(bodyParser.json());
+        server.use(expressSession({
+            secret: 'keyboard cat',
+            resave: false,
+            saveUninitialized: true,
+            cookie: { secure: false },
+          }));
 
         //khai bao Routers
         server.use('/users',usersRouter);

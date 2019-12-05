@@ -72,7 +72,7 @@ usersRouter.post('/login',async (req,res)=>{
             message: 'Wrong password'
           });
         } else {
-          // Session
+          // Session nay bên front chỉ lấy cái currentuser để check hoặc gắn vào localstorage
           req.session.currentUser = {
             _id: user._id,
             email: user.email
@@ -95,7 +95,7 @@ usersRouter.post('/login',async (req,res)=>{
     // check password
 });
 
-// logout user
+// logout user => delete session
 usersRouter.get('/logout', (req, res) => {
     req.session.destroy();
     res.status(200).json({
@@ -104,7 +104,7 @@ usersRouter.get('/logout', (req, res) => {
     });
   });
   
-// test Session currentUser
+// test Session
 usersRouter.get('/test', (req, res) => {
     console.log(req.session.currentUser);
     res.json({
