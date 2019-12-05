@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const usersRouter = require('./users/users.routes');
 const expressSession = require('express-session');
+var cors = require('cors')
 // connect mongodb
 mongoose.connect('mongodb://localhost:27017/cinn-Web',{useNewUrlParser: true},(error)=>{
     if (error){
@@ -14,6 +15,13 @@ mongoose.connect('mongodb://localhost:27017/cinn-Web',{useNewUrlParser: true},(e
 
         //middleware 
         //bodyParser to read body in header of request
+        server.use(express.static('public'));
+        // Cho phep ten mien dc truy cap vao origin
+        server.use(cors({
+        origin: ['http://localhost:3002'],
+        credentials: true,
+        }));
+
         server.use(bodyParser.json());
         server.use(expressSession({
             secret: 'keyboard cat',
