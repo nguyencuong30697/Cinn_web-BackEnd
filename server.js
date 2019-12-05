@@ -18,7 +18,7 @@ mongoose.connect('mongodb://localhost:27017/cinn-Web',{useNewUrlParser: true},(e
         server.use(express.static('public'));
         // Cho phep ten mien dc truy cap vao origin
         server.use(cors({
-        origin: ['http://localhost:3002'],
+        origin: ['http://localhost:3000'],
         credentials: true,
         }));
 
