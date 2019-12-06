@@ -3,7 +3,7 @@ const postsRouter = express.Router();
 const postModel = require('./posts.model');
 const joi = require('@hapi/joi');
 
-postsRouter.get('/get/posts', async (req,res)=>{
+postsRouter.get('/getListPosts/pagination', async (req,res)=>{
     const validateSchema = joi.object().keys({
         pageNumber: joi.number().min(1),
         pageSize: joi.number().min(1).max(10),
@@ -24,13 +24,18 @@ postsRouter.get('/get/posts', async (req,res)=>{
         try{
             const result = await postModel.find({})
                                         .populate('author', '_id email fullName')
-                                        .sort({createDate: 1}) // sort bai viet moi nhat -1 va 1
+                                        .sort({createDate: -1}) // sort bai viet moi nhat -1 va 1
                                         .skip((pageNumber-1)*pageSize)
                                         .limit(pageSize)
                                         .lean();
+            const total = await postModel.find({}).countDocuments(); // co bh ban ghi thoa man cai find
+
             res.status(200).json({
                 success: true,
-                data: result,
+                data: {
+                    data: result,
+                    total: total,
+                }
             });
         }catch(error){
             res.status(500).json({
