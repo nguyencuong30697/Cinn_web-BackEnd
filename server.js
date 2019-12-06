@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const usersRouter = require('./users/users.routes');
 const postsRouter = require('./posts/posts.routes');
+const uploadsRouter = require('./uploads/uploads.routes');
 const expressSession = require('express-session');
 var cors = require('cors')
 // connect mongodb
@@ -34,6 +35,7 @@ mongoose.connect('mongodb://localhost:27017/cinn-Web',{useNewUrlParser: true},(e
         //khai bao Routers
         server.use('/users',usersRouter);
         server.use('/posts',postsRouter);
+        server.use('/uploads',uploadsRouter);
 
         // start server port 3001
         server.listen(3001,(error) => {
