@@ -3,6 +3,44 @@ const postsRouter = express.Router();
 const postModel = require('./posts.model');
 const joi = require('@hapi/joi');
 
+postsRouter.get('/get/posts', async (req,res)=>{
+    const validateSchema = joi.object().keys({
+        pageNumber: joi.number().min(1),
+        pageSize: joi.number().min(1).max(10),
+    });
+    const pageNumber = Number(req.query.pageNumber); // number ma gui qua query la no se thanh string
+    const pageSize = Number(req.query.pageSize);
+    const validateResult = validateSchema.validate({pageNumber: pageNumber,pageSize: pageSize});
+    if(validateResult.error){
+        const error = validateResult.error.details[0];
+        res.status(400).json({
+            success: false,
+            message: error.message,
+        });
+    } else{
+        //get data
+        // pagination
+        // offset paging => pageNumber => limit|skip
+        try{
+            const result = await postModel.find({})
+                                        .populate('author', '_id email fullName')
+                                        .sort({createDate: 1}) // sort bai viet moi nhat -1 va 1
+                                        .skip((pageNumber-1)*pageSize)
+                                        .limit(pageSize)
+                                        .lean();
+            res.status(200).json({
+                success: true,
+                data: result,
+            });
+        }catch(error){
+            res.status(500).json({
+                success: false,
+                message: error.message,
+            });
+        }
+    }
+});
+
 postsRouter.post('/create-post',async (req,res)=>{
     //check login
     if(!req.session.currentUser || !req.session.currentUser.email ){
